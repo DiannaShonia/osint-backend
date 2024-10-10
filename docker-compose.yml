@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - theharvester
+    environment:
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/osint
+      - DATABASE_USER=osintuser
+      - DATABASE_PASSWORD=osintpass13
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=osintdb
+      - POSTGRES_USER=osintuser
+      - POSTGRES_PASSWORD=osintpass13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  theharvester:
+    build:
+      context: .
+      dockerfile: Dockerfile.theharvester
+
+    volumes:
+      - ./theharvester:/theharvester
+    entrypoint: ["python3", "theHarvester.py"]
+    command: ["-d", "${DOMAIN}", "-b", "all"]
+
+volumes:
+  postgres_data:

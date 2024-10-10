@@ -1,0 +1,17 @@
+# Use a lightweight Python image
+FROM python:3.12.7
+
+# Install dependencies
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
+# Clone theHarvester from GitHub
+RUN git clone https://github.com/laramies/theHarvester.git /theHarvester
+
+# Set the working directory
+WORKDIR /theHarvester
+
+# Install Python dependencies
+RUN pip install -r requirements.txt
+
+# Set the entry point to run theHarvester
+ENTRYPOINT ["python3", "theHarvester.py"]
